@@ -30,5 +30,6 @@ namespace FlightSimulator
         double Aileron { get; set; }
         double Throttle { get; set; }
         Location Location { get; set; }
+        string Status { get; set; }
     }
 }

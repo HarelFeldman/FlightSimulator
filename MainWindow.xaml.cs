@@ -26,22 +26,39 @@ namespace FlightSimulator
 	public partial class MainWindow : Window
 	{
 		SimulatorViewModel vm;
+		bool connected = false;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			vm = new SimulatorViewModel(new SimulatorModel(new TelnetClient()));
 			DataContext = vm;
-			vm.model.connect("127.0.0.1",5402);
-			vm.model.start();
+
+			
 
 		}
 
-
-		private void b(object sender, MouseButtonEventArgs e)
+		private void B_Click(object sender, RoutedEventArgs e)
 		{
-			s.Value = e.GetPosition(sender as Slider).X;
+			if (connected == false)
+			{
+				vm.model.connect("127.0.0.1",5402);
+				vm.model.start();
+				vm.model.Status = "Connected succesfuly";
+				connected = true;
+			}
+			
 
+		}
+
+		private void B2_Click(object sender, RoutedEventArgs e)
+		{
+			if (connected == true)
+			{
+				vm.model.disconnect();
+				vm.model.Status = "disconnected";
+				connected = false;
+			}
 		}
 	}
 

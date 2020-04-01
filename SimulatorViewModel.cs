@@ -24,6 +24,14 @@ namespace FlightSimulator
 			if (this.PropertyChanged != null)
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
+		public string VM_Status
+		{
+			get
+			{
+				return model.Status;
+			}
+
+		}
 		// Properties
 		public double VM_heading_deg
 		{

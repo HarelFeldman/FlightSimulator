@@ -8,51 +8,43 @@
         xmlns:Views="clr-namespace:FlightSimulator.Views"
  
     mc:Ignorable="d"
-        Title="MainWindow" Height="833" Width="1171">
+        Title="MainWindow" Height="1000" Width="1311">
 
-    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="1336" Height="869" RenderTransformOrigin="0.685,0.609">
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="1344" Height="869" RenderTransformOrigin="0.685,0.609">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="13*"/>
             <ColumnDefinition Width="178*"/>
         </Grid.ColumnDefinitions>
-        <Views:Joystick Margin="734,474,231,98"  Grid.Column="1" RenderTransformOrigin="0.516,0.501" IsEnabled="False"/>
-
-
-        <m:Map x:Name="myMap" Mode="AerialWithLabels" Center="32.0055,34.8854"   ZoomLevel="0" CredentialsProvider=" AklAfMj7O5P-QvXtS1zsOcZpSVFS6vO_vUh_fixOkop0vJcE0P4j6yugEZDrv--1" Margin="18,115,601,357" Opacity="0.99" Grid.Column="1">
-            <m:Pushpin m:MapLayer.Position="{Binding VM_Location}"/>
-        </m:Map>
-
-
-        <StatusBar Name="StatusBar" Margin="74,630,602,151" RenderTransformOrigin="0.495,0.109" Grid.Column="1" d:LayoutOverrides="HorizontalAlignment">
-            <StatusBar.RenderTransform>
+        <Views:Joystick Grid.Column="1" Margin="471,302,331,141" RenderTransformOrigin="0.354,0.413" d:LayoutOverrides="HorizontalAlignment">
+            <Views:Joystick.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="-1"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform Y="40.664"/>
-                </TransformGroup>
-            </StatusBar.RenderTransform>
-        </StatusBar>
-        <Slider Name="s" Grid.Column="1" Margin="962,577,-13,214"  MouseLeftButtonDown="b" RenderTransformOrigin="0.51,0.48">
-            <Slider.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="90"/>
-                    <TranslateTransform X="-1.402" Y="4.522"/>
-                </TransformGroup>
-            </Slider.RenderTransform>
-        </Slider>
-        <ProgressBar x:Name="progressBar" Value="{Binding DataContext.VM_latitude ,Mode=OneWay, ElementName=progressBar}" Grid.Column="1" Margin="742,178,216,626" RenderTransformOrigin="0.5,0.5">
-            <ProgressBar.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="-1"/>
+                    <ScaleTransform ScaleX="1"/>
                     <SkewTransform/>
                     <RotateTransform/>
                     <TranslateTransform/>
                 </TransformGroup>
-            </ProgressBar.RenderTransform>
-        </ProgressBar>
+            </Views:Joystick.RenderTransform>
+        </Views:Joystick>
+        <Views:dashboard Grid.Column="1" Margin="564,-1,-112,435" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="HorizontalAlignment" Height="435">
+            <Views:dashboard.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Views:dashboard.RenderTransform>
+        </Views:dashboard>
+
+
+        <m:Map x:Name="myMap" Mode="AerialWithLabels" Center="32.0055,34.8854"   ZoomLevel="9" CredentialsProvider=" AklAfMj7O5P-QvXtS1zsOcZpSVFS6vO_vUh_fixOkop0vJcE0P4j6yugEZDrv--1" Margin="-57,176,667,224" Opacity="0.99" Grid.Column="1" Width="643">
+            <m:Pushpin m:MapLayer.Position="{Binding VM_Location}"/>
+        </m:Map>
+        <Button Content="Connect" Grid.Column="1" Margin="31,104,1002,707" FontSize="18" FontWeight="Bold" FontFamily="Aharoni" Click="B_Click"/>
+        <Button Content="Disconnect" Grid.Column="1" Margin="284,103,749,708" FontSize="18" FontWeight="Bold" FontFamily="Aharoni" Click="B2_Click"/>
+        <Label x:Name="status_bar" Content="{Binding VM_Status}" Grid.Column="1" Margin="-41,665,677,144" FontSize="18" FontFamily="Arial Black" Foreground="#FFF10C0C" BorderBrush="#FF3C2F2F" Background="#FFD8DDDD" Width="617"/>
+
+
 
 
 

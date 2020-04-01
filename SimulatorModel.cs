@@ -11,11 +11,14 @@ namespace FlightSimulator
 	{
 		public TelnetClient telnetClient;
 		volatile Boolean stop;
+		public Queue<string> commandsQueue;
 
 		public SimulatorModel(TelnetClient telnetClient)
 		{
 			this.telnetClient = telnetClient;
 			stop = false;
+			commandsQueue = new Queue<string>();
+	
 		}
 		public void connect(string ip, int port)
 		{
@@ -28,55 +31,80 @@ namespace FlightSimulator
 		}
 		public void start()
 		{
-			double d= Double.Parse("34.5");
+			double d = Double.Parse("34.5");
 			latitude = d;
 
-			Thread t = new Thread(delegate ()
+			Thread t1 = new Thread(delegate ()
 			  {
 				  while (!stop)
 				  {
 					  telnetClient.write("get /position/latitude-deg");
 					  //latitude and longitude in different order in Location class
-					  location.Longitude = Double.Parse(telnetClient.read());
+					  location.Longitude = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /position/longitude-deg");
-					  location.Latitude = Double.Parse(telnetClient.read());
+					  location.Latitude = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  NotifyPropertyChanged("Location");
 					  telnetClient.write("get /instrumentation/heading-indicator/indicated-heading-deg");
-					  heading_deg = Double.Parse(telnetClient.read());
+					  heading_deg = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /instrumentation/gps/indicated-vertical-speed");
-					  vertical_speed = Double.Parse(telnetClient.read());
+					  vertical_speed = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /instrumentation/airspeed-indicator/indicated-speed-kt");
 
 
-					  airspeed = Double.Parse(telnetClient.read());
+					  airspeed = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /instrumentation/gps/indicated-ground-speed-kt");
 
 
-					  ground_speed = Double.Parse(telnetClient.read());
+					  ground_speed = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /instrumentation/attitude-indicator/internal-roll-deg");
 
 
-					  roll = Double.Parse(telnetClient.read());
+					  roll = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /instrumentation/gps/indicated-altitude-ft");
 
 
-					  altitude = Double.Parse(telnetClient.read());
+					  altitude = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /instrumentation/attitude-indicator/internal-pitch-deg");
 
 
-					  pitch = Double.Parse(telnetClient.read());
+					  pitch = System.Math.Round(Double.Parse(telnetClient.read()), 4);
 					  telnetClient.write("get /instrumentation/altimeter/indicated-altitude-ft");
-					  altimeter = Double.Parse(telnetClient.read());
+					  altimeter = System.Math.Round(Double.Parse(telnetClient.read()), 4);
+
 
 					  Thread.Sleep(250);
 				  }
-			  }); 
-		t.SetApartmentState(ApartmentState.STA);
-		t.Start();
+			  });
+			t1.SetApartmentState(ApartmentState.STA);
+			t1.Start();
+			Thread t2 = new Thread(delegate ()
+			{
+				while (!stop)
+				{
+					if (commandsQueue.Count != 0)
+					{
+						string s = commandsQueue.Peek();
+						telnetClient.write(s);
+						commandsQueue.Dequeue();
+					}
+				}
+			});
+			t2.SetApartmentState(ApartmentState.STA);
+			t2.Start();
 		}
-
 		public event PropertyChangedEventHandler PropertyChanged;
-
+		private string status="";
+		public string Status
+		{
+			get {
+				return status;
+			}
+			set 
+			{ 
+				status = value;
+				NotifyPropertyChanged("status");
+			}
+		}
 		private double heading;
 		public double heading_deg
 		{
@@ -218,6 +246,7 @@ namespace FlightSimulator
 			{
 				rudder = value;
 				NotifyPropertyChanged("Rudder");
+				commandsQueue.Enqueue("set /controls/flight/rudder "+value+"\n");
 			}
 		}
 		public double elavator;
@@ -231,6 +260,7 @@ namespace FlightSimulator
 			{
 				elavator = value;
 				NotifyPropertyChanged("Elavator");
+				commandsQueue.Enqueue("set /controls/flight/elevator "+value+"\n");
 			}
 		}
 		public double throttle;
@@ -244,6 +274,7 @@ namespace FlightSimulator
 			{
 				throttle = value;
 				NotifyPropertyChanged("Throttle");
+				commandsQueue.Enqueue("set /controls/engines/current-engine/throttle " + value + "\n");
 			}
 		}
 		public double aileron;
@@ -257,6 +288,7 @@ namespace FlightSimulator
 			{
 				aileron = value;
 				NotifyPropertyChanged("Aileron");
+				commandsQueue.Enqueue("set /controls/flight/aileron " + value + "\n");
 			}
 		}
 		private Location location = new Location(3, 31);
